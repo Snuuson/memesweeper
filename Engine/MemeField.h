@@ -1,6 +1,7 @@
 #pragma once
 #include "Graphics.h"
 #include "Vei2.h"
+#include "SpriteCodex.h"
 class MemeField
 {
 private:
@@ -14,7 +15,8 @@ private:
 			Revealed
 		};
 		void SpawnMeme();
-		bool HasMeme() const;
+		void Draw(const Vei2& screenPos, Graphics& gfx);
+		bool HasMeme() const; 
 	private:
 		State state = State::Hidden;
 		bool hasMeme = false;
@@ -25,7 +27,7 @@ private:
 	Tile field[width*height];
 private:
 	Tile & TileAt(const Vei2& gridPos);
-public: 
+public:
 	void Draw(Graphics& gfx) const;
 	MemeField(int nMemes);
 public:

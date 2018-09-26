@@ -15,6 +15,15 @@ MemeField::Tile & MemeField::TileAt(const Vei2 & gridPos)
 	return field[gridPos.y*width + gridPos.x*height];
 }
 
+void MemeField::Draw(Graphics & gfx) const
+{
+	for (Vei2 gridPos = { 0,0 }; gridPos.y < height; gridPos.y++) {
+		for (; gridPos.x < width; gridPos.x++) {
+			
+		}
+	}
+}
+
 MemeField::MemeField(int nMemes)
 {
 	assert(nMemes > 0 && nMemes < width * height);
@@ -47,6 +56,30 @@ void MemeField::Tile::SpawnMeme()
 {
 	assert(!hasMeme);
 	hasMeme = true;
+}
+
+void MemeField::Tile::Draw(const Vei2 & screenPos, Graphics & gfx)
+{
+	switch (state)
+	{
+	case MemeField::Tile::State::Hidden:
+		SpriteCodex::DrawTileButton(screenPos, gfx);
+		break;
+	case MemeField::Tile::State::Flagged:
+		SpriteCodex::DrawTileButton(screenPos, gfx);
+		SpriteCodex::DrawTileFlag(screenPos, gfx);
+		break;
+	case MemeField::Tile::State::Revealed:
+		if (!HasMeme()) {
+			SpriteCodex::DrawTile0(screenPos,gfx);
+		}
+		else {
+			SpriteCodex::DrawTileBomb(screenPos, gfx);
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 bool MemeField::Tile::HasMeme() const

@@ -27,6 +27,7 @@ private:
 	Tile field[width*height];
 private:
 	Tile & TileAt(const Vei2& gridPos);
+	const Tile& TileAt(const Vei2& gridPos) const;
 public:
 	void Draw(Graphics& gfx) const;
 	MemeField(int nMemes);

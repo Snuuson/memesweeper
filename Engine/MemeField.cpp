@@ -15,11 +15,17 @@ MemeField::Tile & MemeField::TileAt(const Vei2 & gridPos)
 	return field[gridPos.y*width + gridPos.x*height];
 }
 
+const MemeField::Tile & MemeField::TileAt(const Vei2 & gridPos) const
+{
+	return field[gridPos.y*width + gridPos.x*height];
+
+}
+
 void MemeField::Draw(Graphics & gfx) const
 {
 	for (Vei2 gridPos = { 0,0 }; gridPos.y < height; gridPos.y++) {
 		for (; gridPos.x < width; gridPos.x++) {
-			
+			TileAt(gridPos).Draw(gridPos * SpriteCodex::tileSize, gfx);
 		}
 	}
 }

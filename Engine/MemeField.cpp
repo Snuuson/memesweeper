@@ -12,22 +12,32 @@ MemeField::MemeField()
 
 MemeField::Tile & MemeField::TileAt(const Vei2 & gridPos)
 {
-	return field[gridPos.y*width + gridPos.x*height];
+	return field[gridPos.y*width + gridPos.x];
 }
 
 const MemeField::Tile & MemeField::TileAt(const Vei2 & gridPos) const
 {
-	return field[gridPos.y*width + gridPos.x*height];
+	return field[gridPos.y*width + gridPos.x];
 
 }
 
-void MemeField::Draw(Graphics & gfx) const
+void MemeField::Draw(Graphics & gfx) 
 {
+	RectI rect = GetRect();
+	gfx.DrawRect(rect, SpriteCodex::baseColor);
 	for (Vei2 gridPos = { 0,0 }; gridPos.y < height; gridPos.y++) {
-		for (; gridPos.x < width; gridPos.x++) {
+		for (gridPos.x = 0; gridPos.x < width; gridPos.x++) {
+			
 			TileAt(gridPos).Draw(gridPos * SpriteCodex::tileSize, gfx);
+			
 		}
+		
 	}
+}
+
+RectI MemeField::GetRect() const
+{
+	return RectI(0,width*SpriteCodex::tileSize,0,height*SpriteCodex::tileSize);
 }
 
 MemeField::MemeField(int nMemes)

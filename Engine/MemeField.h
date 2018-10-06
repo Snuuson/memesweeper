@@ -36,6 +36,8 @@ private:
 	Tile field[width*height];
 	int wndScreenHeight = 800;
 	int wndScreenWidth = 600;
+	bool init = false;
+	int nMemes;
 private:
 	Tile & TileAt(const Vei2& gridPos);
 	Vei2 ScreenToGrid(const Vei2 & screenPos);

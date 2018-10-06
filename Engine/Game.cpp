@@ -26,7 +26,7 @@ Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd),
-	field(4,gfx.ScreenHeight,gfx.ScreenWidth)
+	field(33,gfx.ScreenHeight,gfx.ScreenWidth)
 {
 }
 

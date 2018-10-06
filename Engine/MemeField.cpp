@@ -68,7 +68,43 @@ void MemeField::Draw(Graphics & gfx)
 
 void MemeField::OnRevealClick(const Vei2 & screenPos)
 {
+	if (!init) {
+		init = true;
+		//SpawnMemes
+		assert(nMemes > 0 && nMemes < width * height);
+		std::random_device rd;
+		std::mt19937 rng(rd());
+		std::uniform_int_distribution<int> xDist(0, width - 1);
+		std::uniform_int_distribution<int> yDist(0, height - 1);
 
+
+		//TileAt(Vei2(2,2)).SpawnMeme();
+		//TileAt(Vei2(6, 6)).SpawnMeme();
+
+
+		for (int nSpawned = 0; nSpawned < nMemes; nSpawned++) {
+
+			Vei2 spawnPos;
+			Vei2 cursorGridPos = ScreenToGrid(screenPos);
+			do
+			{
+				spawnPos = { xDist(rng),yDist(rng) };
+			} while (TileAt(spawnPos).HasMeme() || (spawnPos.x == cursorGridPos.x && spawnPos.y == cursorGridPos.y) );
+
+			TileAt(spawnPos).SpawnMeme();
+		}
+
+
+
+		for (Vei2 gridPos = { 0,0 }; gridPos.y < height; gridPos.y++) {
+			for (gridPos.x = 0; gridPos.x < width; gridPos.x++) {
+
+				TileAt(gridPos).SetNeighborMemeCount(CountNeighborMemes(gridPos));
+
+			}
+		}
+		OutputDebugStringW(L"DONE");
+	}
 	if (!isFucked) {
 		const Vei2 gridPos = ScreenToGrid(screenPos);
 		assert(gridPos.x >= 0 && gridPos.x < width && gridPos.y >= 0 && gridPos.y < height);
@@ -106,12 +142,13 @@ RectI MemeField::GetRect() const
 void MemeField::Tile::SetNeighborMemeCount(int memeCount)
 {
 
-	assert(nNeighborMemes == -1);
+	
 	nNeighborMemes = memeCount;
 }
 
 MemeField::MemeField(int nMemes,int screenHeight,int screenWidth)
-	
+	:
+	nMemes(nMemes)
 {
 	//Rect init
 	int left = (screenWidth / 2) - (SpriteCodex::tileSize*width / 2);
@@ -120,40 +157,9 @@ MemeField::MemeField(int nMemes,int screenHeight,int screenWidth)
 	int bottom = top + SpriteCodex::tileSize*height;
 	rect = RectI(left, right, top, bottom);
 
-	//SpawnMemes
-	assert(nMemes > 0 && nMemes < width * height);
-	std::random_device rd;
-	std::mt19937 rng(rd());
-	std::uniform_int_distribution<int> xDist(0, width - 1);
-	std::uniform_int_distribution<int> yDist(0, height - 1);
-
-	
-		//TileAt(Vei2(2,2)).SpawnMeme();
-		//TileAt(Vei2(6, 6)).SpawnMeme();
 	
 
-	for (int nSpawned = 0; nSpawned < nMemes; nSpawned++) {
-
-		Vei2 spawnPos;
-
-		do
-		{
-			spawnPos = { xDist(rng),yDist(rng) };
-		} while (TileAt(spawnPos).HasMeme());
-
-		TileAt(spawnPos).SpawnMeme();
-	}
-
-
-
-	for (Vei2 gridPos = { 0,0 }; gridPos.y < height; gridPos.y++) {
-		for (gridPos.x = 0; gridPos.x < width; gridPos.x++) {
-
-			TileAt(gridPos).SetNeighborMemeCount(CountNeighborMemes(gridPos));
-
-		}
-
-	}
+	
 	/*
 	for (int i = 0; i < 120; i++) {
 		const Vei2 gridPos = { xDist(rng),yDist(rng) };

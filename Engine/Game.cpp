@@ -26,7 +26,7 @@ Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd),
-	field(33,gfx.ScreenHeight,gfx.ScreenWidth)
+	field(20,gfx.ScreenHeight,gfx.ScreenWidth)
 {
 }
 
@@ -61,5 +61,12 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	field.Draw(gfx);
+	if (!field.HasWon()) 
+	{
+		field.Draw(gfx);
+	}
+	else {
+		SpriteCodex::DrawEndScreen(gfx);
+	}
+	
 }

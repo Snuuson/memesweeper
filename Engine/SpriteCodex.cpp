@@ -1509,3 +1509,19 @@ void SpriteCodex::DrawTileNumber(const Vei2 & pos, int n, Graphics & gfx)
 		break;
 	}
 }
+
+void SpriteCodex::DrawEndScreen(Graphics & gfx)
+{
+	for (int i = 0; i < 600; i++) {
+		for (int j = 0; j < 50; j++) {
+			gfx.PutPixel(i+j, i, 45, 128, 55);
+			if(i+j<600){
+			gfx.PutPixel(i, i+j, 45, 128, 55);
+			}
+		}
+	}
+	
+	
+	gfx.PutPixel(0, 0, 45,128,55);
+	
+}

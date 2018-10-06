@@ -133,6 +133,18 @@ void MemeField::OnFlagClick(const Vei2 & screenPos)
 	}
 }
 
+bool MemeField::HasWon()
+{
+	int count = 0;
+	for each (Tile  tile in field)
+	{
+		if (tile.isRevealed()) {
+			count++;
+		}
+	}
+	return count == (width * height) - nMemes;
+}
+
 RectI MemeField::GetRect() const
 {
 

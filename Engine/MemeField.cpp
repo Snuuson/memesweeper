@@ -119,6 +119,9 @@ void MemeField::OnRevealClick(const Vei2 & screenPos)
 			}
 		}
 	}
+	else {
+		respawn = true;
+	}
 }
 
 void MemeField::OnFlagClick(const Vei2 & screenPos)
@@ -157,6 +160,8 @@ void MemeField::Tile::SetNeighborMemeCount(int memeCount)
 	
 	nNeighborMemes = memeCount;
 }
+
+
 
 MemeField::MemeField(int nMemes,int screenHeight,int screenWidth)
 	:
@@ -202,6 +207,17 @@ int MemeField::CountNeighborMemes(const Vei2 & gridPos)
 	}
 	return count;
 
+}
+
+void MemeField::cheat()
+{
+	for (Tile& tile : field) {
+		if (tile.HasMeme() == true) {
+			if (!tile.IsFlagged()) {
+				tile.ToggleFlag();
+			}
+		}
+	}
 }
 
 MemeField::~MemeField()

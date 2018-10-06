@@ -26,7 +26,7 @@ Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd),
-	field(20,gfx.ScreenHeight,gfx.ScreenWidth)
+	field(90,gfx.ScreenHeight,gfx.ScreenWidth)
 {
 }
 
@@ -41,7 +41,12 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	
-
+	if (wnd.kbd.KeyIsPressed(0x52)) {
+		field = MemeField(90, gfx.ScreenHeight, gfx.ScreenWidth);
+	}
+	if (wnd.kbd.KeyIsPressed(0x43)) {
+		field.cheat();
+	}
 	while (!wnd.mouse.IsEmpty()) {
 		const auto e = wnd.mouse.Read();
 		if (e.GetType() == Mouse::Event::Type::LPress) {

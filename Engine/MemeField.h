@@ -22,6 +22,7 @@ private:
 		void ToggleFlag();
 		bool IsFlagged() const;
 		void SetNeighborMemeCount(int memeCount);
+		
 	private:
 		State state = State::Hidden;
 		bool hasMeme = false;
@@ -37,6 +38,7 @@ private:
 	int wndScreenHeight = 800;
 	int wndScreenWidth = 600;
 	bool init = false;
+	
 	int nMemes = 0;
 private:
 	Tile & TileAt(const Vei2& gridPos);
@@ -52,6 +54,8 @@ public:
 	MemeField(int nMemes,int screenHeight,int screenWidth);
 	int CountNeighborMemes(const Vei2& gridPos);
 	bool isFucked = false;
+	bool respawn = false;
+	void cheat();
 
 public:
 	

@@ -2,13 +2,11 @@
 #include <assert.h>
 #include <random>
 #include "Vei2.h"
+#include "Graphics.h"
 
 
 
-MemeField::MemeField()
-{
 
-}
 
 MemeField::Tile & MemeField::TileAt(const Vei2 & gridPos)
 {
@@ -17,7 +15,7 @@ MemeField::Tile & MemeField::TileAt(const Vei2 & gridPos)
 
 Vei2 MemeField::ScreenToGrid(const Vei2 & screenPos)
 {
-	return screenPos / SpriteCodex::tileSize;
+	return (screenPos - Vei2(rect.left, rect.top)) / SpriteCodex::tileSize;
 }
 
 const MemeField::Tile & MemeField::TileAt(const Vei2 & gridPos) const
@@ -26,14 +24,42 @@ const MemeField::Tile & MemeField::TileAt(const Vei2 & gridPos) const
 
 }
 
+void MemeField::AreaReveal(const Vei2& startingGridPos) 
+{
+	int left = startingGridPos.x - 1 >= 0 ? startingGridPos.x - 1 : 0;
+	int right = startingGridPos.x + 1 < width ? startingGridPos.x + 1 : width - 1;
+	int top = startingGridPos.y - 1 >= 0 ? startingGridPos.y - 1 : 0;
+	int bottom = startingGridPos.y + 1 < height ? startingGridPos.y + 1 : height -1;
+	assert(left >= 0 && right < width && top >= 0 && bottom < height);
+	for (; top <= bottom; top++) {
+		for (left = startingGridPos.x - 1 >= 0 ? startingGridPos.x - 1 : 0; left <= right; left++) {
+			Vei2 probeTilePos = Vei2(left, top);
+			Tile& probeTile = TileAt(probeTilePos);
+			Vei2 startPoint = startingGridPos;
+			if (!probeTile.isRevealed() && !probeTile.IsFlagged()) {
+
+				if (CountNeighborMemes(probeTilePos) == 0) {
+					probeTile.Reveal();
+					AreaReveal(probeTilePos);
+				}
+				else {
+					probeTile.Reveal();
+				}
+			}
+		}
+	}
+}
+
 void MemeField::Draw(Graphics & gfx)
 {
 	RectI rect = GetRect();
+	RectI border = rect.GetExpanded(8);
+	gfx.DrawRect(border,Colors::Cyan);
 	gfx.DrawRect(rect, SpriteCodex::baseColor);
 	for (Vei2 gridPos = { 0,0 }; gridPos.y < height; gridPos.y++) {
 		for (gridPos.x = 0; gridPos.x < width; gridPos.x++) {
 
-			TileAt(gridPos).Draw(gridPos * SpriteCodex::tileSize,isFucked, gfx);
+			TileAt(gridPos).Draw((gridPos * SpriteCodex::tileSize) + Vei2(rect.left, rect.top), isFucked, gfx);
 
 		}
 
@@ -51,7 +77,9 @@ void MemeField::OnRevealClick(const Vei2 & screenPos)
 			tile.Reveal();
 			if (tile.HasMeme()) {
 				isFucked = true;
-				isFucked = true;
+			}
+			else if (CountNeighborMemes(gridPos) == 0) {
+				AreaReveal(gridPos);
 			}
 		}
 	}
@@ -71,7 +99,8 @@ void MemeField::OnFlagClick(const Vei2 & screenPos)
 
 RectI MemeField::GetRect() const
 {
-	return RectI(0, width*SpriteCodex::tileSize, 0, height*SpriteCodex::tileSize);
+
+	return rect;
 }
 
 void MemeField::Tile::SetNeighborMemeCount(int memeCount)
@@ -81,13 +110,27 @@ void MemeField::Tile::SetNeighborMemeCount(int memeCount)
 	nNeighborMemes = memeCount;
 }
 
-MemeField::MemeField(int nMemes)
+MemeField::MemeField(int nMemes,int screenHeight,int screenWidth)
+	
 {
+	//Rect init
+	int left = (screenWidth / 2) - (SpriteCodex::tileSize*width / 2);
+	int right = left + SpriteCodex::tileSize*width;
+	int top = (screenHeight / 2) - (SpriteCodex::tileSize*height / 2);
+	int bottom = top + SpriteCodex::tileSize*height;
+	rect = RectI(left, right, top, bottom);
+
+	//SpawnMemes
 	assert(nMemes > 0 && nMemes < width * height);
 	std::random_device rd;
 	std::mt19937 rng(rd());
 	std::uniform_int_distribution<int> xDist(0, width - 1);
 	std::uniform_int_distribution<int> yDist(0, height - 1);
+
+	
+		//TileAt(Vei2(2,2)).SpawnMeme();
+		//TileAt(Vei2(6, 6)).SpawnMeme();
+	
 
 	for (int nSpawned = 0; nSpawned < nMemes; nSpawned++) {
 

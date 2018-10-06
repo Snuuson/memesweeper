@@ -29,24 +29,29 @@ private:
 		
 
 	};
-	static constexpr int width = 20;
-	static constexpr int height = 16;
+	static constexpr int width = 6;
+	static constexpr int height = 6;
+	
+	RectI rect;
 	Tile field[width*height];
+	int wndScreenHeight = 800;
+	int wndScreenWidth = 600;
 private:
 	Tile & TileAt(const Vei2& gridPos);
 	Vei2 ScreenToGrid(const Vei2 & screenPos);
 	const Tile& TileAt(const Vei2& gridPos) const;
+	void AreaReveal(const Vei2& startingGridPos);
 public:
 	void Draw(Graphics& gfx);
 	void OnRevealClick(const Vei2& screenPos);
 	void OnFlagClick(const Vei2& screenPos);
 	RectI GetRect() const;
-	MemeField(int nMemes);
+	MemeField(int nMemes,int screenHeight,int screenWidth);
 	int CountNeighborMemes(const Vei2& gridPos);
 	bool isFucked = false;
 
 public:
-	MemeField();
+	
 	~MemeField();
 };
 
